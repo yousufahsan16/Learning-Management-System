@@ -1,0 +1,109 @@
+<div *ngIf="topicWiseQuestions" class="fixBorderRadius modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title"><strong>Questions</strong></h4>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th class="question"></th>
+        <th>Question</th>
+        <th class="questionLevel">Question Level</th>
+        <th class="actionSpacing">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let question of topicWiseQuestions; let i = index;">
+        <td><input class="form-check-input" #checkboxRef type="checkbox"
+          style="margin-left: 10px; margin-top: -5px; display: block;" type="checkbox"
+          (change)="manageQuestionsToAdd($event,i)"></td>
+        <td class="lengthFix">{{ question.Question }}</td>
+        <td class="questionLevel">{{ question.Level }}</td>
+        <td>
+          <!-- <button type="button" *ngIf="limitOver" class="BtnSpacing btn btn-outline-primary btn-sm" (click)="openPopup('limitOver')">Add
+          Question</button> -->
+          <button *ngIf="!limitError && !limitOver" type="button"
+            class="custom-btn BtnSpacing btn btn-outline-primary btn-sm"
+            (click)="addQuestionInTask(question, checkboxRef)">Add</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="multipleQuestionsArray.length > 0" class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="addMultipleQuestions()">Add Selected Questions</button>
+  </div>
+</div>
+
+<!-- <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStyle}">
+  <div class="modal-dialog centered-modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Warning</h4>
+      </div>
+      <div class="modal-body">
+        <p>You can add only five Questions of Each Level </p>
+        <p><strong></strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closePopup('limitOver')">OK</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':limitErrorPopUpDisplayStyle}">
+  <div class="modal-dialog centered-modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Warning</h4>
+      </div>
+      <div class="modal-body">
+        <p>You have to add 15 Questions </p>
+        <p><strong></strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closePopup('limitError')">OK</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<div *ngIf="questionArray.length > 0" class="fixBorderRadius componentMargin modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title"><strong>Task</strong></h4>
+    <h6 class="deadline deadlineHeading">Deadline</h6>
+    <div class="deadline">
+      <input class="form-control calender" min="todayDate" type="date" name="dt" [(ngModel)]="date" min="{{minDate}}" style="width: 220px;" 
+      [style.border-color]="dateRequired ? 'red' : '#E3E3E3'" [style.color]="dateRequired ? 'red' : '#2c2c2c'"/>
+      <!-- <input type="datetime-local" [min]="todayDate" /> --> 
+    </div>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th class="ques"></th>
+        <th>Question</th>
+        <th class="questionLevel">Question Level</th>
+        <th class="actionSpacing">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let question of questionArray; let questionNo = index;">
+        <!-- <th ></th> -->
+        <td class="ques" style="text-align:center;">{{ questionNo+1 }}</td>
+        <td class="lengthFix">{{ question.Question }}</td>
+        <td class="questionLevel">{{ question.Level }}</td>
+        <td>
+          <button type="button" class="custom-btn BtnSpacing btn btn-outline-danger btn-sm"
+            (click)="removeQuestions(questionNo)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="modal-footer">
+    <!-- <button type="button" *ngIf="limitError" class="BtnSpacing btn btn-outline-primary btn-sm"
+          (click)="openPopup('limitError')">Add Task</button> -->
+    <button *ngIf="!limitError && !limitOver" type="button" class="btn btn-primary" (click)="AddTask()">Add Task</button>
+  </div>
+</div>

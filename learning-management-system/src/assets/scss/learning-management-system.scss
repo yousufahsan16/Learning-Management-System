@@ -1,0 +1,61 @@
+/*!
+
+=========================================================
+* Learning Management System
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/learning-management-system-angular
+* Copyright 2019 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://github.com/creativetimofficial/learning-management-system-angular/blob/master/LICENSE.md)
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+*/
+
+@import 'learning-management-system/variables';
+@import 'learning-management-system/mixins';
+
+// Plugins CSS
+@import "learning-management-system/plugins/plugin-animate-bootstrap-notify";
+@import "learning-management-system/plugins/plugin-perfect-scrollbar";
+
+// Core CSS
+@import "learning-management-system/buttons";
+@import "learning-management-system/inputs";
+@import "learning-management-system/typography";
+@import "learning-management-system/misc";
+@import "learning-management-system/checkboxes-radio";
+
+
+// components
+@import "learning-management-system/navbar";
+@import "learning-management-system/page-header";
+@import "learning-management-system/dropdown";
+@import "learning-management-system/alerts";
+@import "learning-management-system/images";
+@import "learning-management-system/nucleo-outline";
+@import "learning-management-system/tables";
+@import "learning-management-system/sidebar-and-main-panel";
+@import "learning-management-system/footers";
+@import "learning-management-system/fixed-plugin";
+
+// cards
+@import "learning-management-system/cards";
+@import "learning-management-system/cards/card-plain";
+@import "learning-management-system/cards/card-chart";
+@import "learning-management-system/cards/card-user";
+@import "learning-management-system/cards/card-map";
+@import "learning-management-system/cards/card-stats";
+
+// angular differences
+@import "learning-management-system/angular/plugin-ngx-toastr";
+@import "learning-management-system/angular/sidebar-and-main-panel";
+@import "learning-management-system/angular/dropdown";
+@import "learning-management-system/angular/inputs";
+@import "learning-management-system/angular/fixed-plugin";
+
+@import "learning-management-system/responsive";

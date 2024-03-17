@@ -1,0 +1,24 @@
+.blur {
+    filter: blur(2px);
+}
+
+.centered-modal-dialog {
+    position: absolute;
+    top: 35%;
+    bottom: 50%;
+    left: 35%;
+    right: 50%;
+    margin: auto;
+    width: 50%;
+    height: 50%;
+}
+
+.custom-modal-content {
+    border-color: #343a40;
+    border-radius: 20px;
+    border-width: 3px;
+}
+
+.center-align-text {
+    text-align: center;
+}

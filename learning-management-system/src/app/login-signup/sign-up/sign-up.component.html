@@ -1,0 +1,58 @@
+<div class="container py-2 h-100">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+      <div class="card shadow-2-strong" style="border-radius: 1rem;">
+        <div class="card-body p-5 text-center">
+
+          <div class="logo mb-4">
+            <img src="../../../assets/img/bariTechLogo.png" alt="Logo" width="150" height="40">
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-4">
+              <div class="form-outline">
+                <a routerLink="/login"><button class="btn btn-danger btn-block mb-4" [style.background-color]="toggle ? '#dd4c3991' : '#dd4b39'"
+                  (click)=loginEnableDisableRule> Login</button></a>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4">
+              <div class="form-outline">
+                <a routerLink="/sign-up"><button class="btn btn-danger btn-block mb-4"  [style.background-color]="toggle ? '#dd4b39' : '#dd4c3991'"
+                  (click)=signUpEnableDisableRule()> Sign Up</button></a>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-outline mb-4">
+            <input type="text" [(ngModel)]="name" name="name" placeholder="Name" class="form-control" />
+            <!-- <label class="form-label">Username</label> -->
+          </div>
+
+          <div class="form-outline mb-4">
+            <input type="text" [(ngModel)]="username" name="name" placeholder="Username" class="form-control" 
+            [style.border-color]="emptyCredentials ? 'red' : '#ced4da9'"/>
+            <!-- <label class="form-label">Username</label> -->
+          </div>
+
+          <div class="form-outline mb-4">
+            <input type="text" [(ngModel)]="email" name="email" placeholder="Email" class="form-control" />
+            <!-- <label class="form-label">Username</label> -->
+          </div>
+
+          <div class="form-outline mb-4">
+            <input type="password" [(ngModel)]="password" name="password" placeholder="Password" class="form-control" 
+            [style.border-color]="emptyCredentials ? 'red' : '#ced4da'"/>
+            <!-- <label class="form-label">Password</label> -->
+          </div>
+          <div *ngIf="invalidCredentials" style="color: red;">Please choose another username.</div>
+          <div *ngIf="emptyCredentials" style="color: red;">Please fill all the mandatory fields.</div>
+          <div *ngIf="invalidEmail" style="color: red;">Invalid Email.</div>
+
+          <button type="submit" (click)="AddNewUser()" class="signup btn btn-primary btn-block mb-2">Sign Up</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

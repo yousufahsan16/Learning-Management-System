@@ -1,0 +1,68 @@
+<div class="fixBorderRadius componentMargin modal-content">
+    <div class="modal-header">
+        <h4 class="modal-title"><strong>Question {{ questionNo }}</strong></h4>
+        <div class="form-group" style="text-align:end;">
+            <label style="font-weight: bold; padding-top: 35px;" [style.color]="colorYellow ? '#b9b93f' : colorRed ? 'red' : '#6bd098'">{{ timeLeft }}</label>
+        </div>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="form-group" style="text-align: center;">
+            <label style="font-weight: bold;">{{ question }}</label>
+        </div>
+
+        <div *ngIf="questionNo <= 5">
+            <div class="form-group">
+                <div class="row" style="margin-left: 260px;">
+                    <div class="col-xs-6 col-sm-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                                value="True" [(ngModel)]="selectedAnswer"/>
+                            <label class="form-check-label" for="inlineRadio1">True</label>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                                value="False" [(ngModel)]="selectedAnswer"/>
+                            <label class="form-check-label" for="inlineRadio2">False</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="chooseAnswer">
+                <img src="../../../assets/img/invalid.png" alt="Error" style="width: 20px; height: 20px;">
+                <label style="color: red;">&nbsp;Select True OR False</label>
+            </div>
+            
+            <!-- <div class="btn-group">
+                <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked />
+                <label class="btn btn-outline-danger btn-sm" style="border-radius: 12px;" for="option1">True</label>
+              
+                <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" />
+                <label class="btn btn-outline-danger btn-sm" for="option2">False</label>
+            </div> -->
+        </div>
+        <div class="form-group" *ngIf="questionNo > 5">
+            <textarea class="form-control" rows="3" placeholder="Answer"
+              [(ngModel)]="detailedAnswer"></textarea>
+        </div>
+        <div *ngIf="writeAnswer">
+            <img src="../../../assets/img/invalid.png" alt="Error" style="width: 20px; height: 20px;">
+            <label style="color: red;">&nbsp;Answer Required.</label>
+        </div>
+        <div *ngIf="shortAnswer">
+            <img src="../../../assets/img/invalid.png" alt="Error" style="width: 20px; height: 20px;">
+            <label style="color: red;">&nbsp;Answer should be less than 350 characters.</label>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" *ngIf="!quizSubmitted && questionNo < 15" class="btn btn-danger" (click)="getnextQuestion()">Next Question</button>
+        <button type="button" *ngIf="!quizSubmitted && questionNo >= 15" class="btn btn-danger" (click)="submitQuiz()">Submit Quiz</button>
+        <button *ngIf="quizSubmitted" class="btn btn-danger buttonload" style="width: 150px; height: 40px">
+            <span class="fa fa-spinner fa-spin"></span>&nbsp;Submitting
+        </button>
+    </div>
+</div>

@@ -1,0 +1,163 @@
+<!-- <p *ngIf="ROLE === 'BA'">BA</p> -->
+<div class="row" style="margin-left: 5px;" *ngIf="adminRole.includes(ROLE)">
+  <div ngbDropdown class="d-inline-block">
+    <button class="btn btn-outline-dark" ngbDropdownToggle>{{ selectedResource || 'Team Member' }}</button>
+    <div ngbDropdownMenu class="scrollable-dropdown-menu">
+      <button class="dropdown-item" (click)=ngOnInit()>Team Member</button>
+      <button *ngFor="let resource of allResources" class="dropdown-item" (click)="getUserSpecificTopics(resource)">{{
+        resource }}</button>
+    </div>
+  </div>
+
+  <!-- <div *ngIf="resourceWiseTopics" ngbDropdown class="d-inline-block custom-dropdown">
+    <button class="btn btn-outline-dark" ngbDropdownToggle>Topic</button>
+    <div ngbDropdownMenu class="scrollable-dropdown-menu custom-menu">
+      <button *ngFor="let topic of resourceWiseTopics.Topics" class="dropdown-item">
+        {{ topic.Topic }}
+      </button>
+    </div>
+  </div> -->
+</div>
+<br>
+<br>
+
+<!-- tasks-rejected -->
+<div *ngIf="adminRole.includes(ROLE) && rejectedTasksPresent" class="fixBorderRadius modal-content" style="margin-bottom: 30px;">
+  <div class="modal-header">
+    <h4 class="modal-title"><strong>Rejected Tasks</strong></h4>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <!-- <th class="question"></th> -->
+        <th class="question">Tasks</th>
+        <th class="questionLevel">Reason</th>
+        <th style="padding-left: 165px;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let topic of resourceWiseTopics.Topics;">
+        <td *ngIf="topic.TopicStatus.includes('Rejected')" class="question lengthFix">{{ topic.Topic }}</td>
+        <td *ngIf="topic.TopicStatus.includes('Rejected')" class="questionLevel">{{ topic.Reason }}</td>
+        
+        <td *ngIf="topic.TopicStatus.includes('Rejected')" class="BtnsSpacing" style="margin-left: 110px;">
+          <button type="button" class="btn btn-outline-primary btn-sm"
+              (click)="openAndClosePopup('AssignTaskPopUp', topic.Topic, 'TaskCreated')">Re-Assign</button>
+          <button type="button" class="custom-btn editBtnMargin btn btn-outline-danger btn-sm"
+              (click)="openAndClosePopup('DismissTaskPopUp', topic.Topic, 'Rejected')">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- tasks-created -->
+<div *ngIf="!adminRole.includes(ROLE) && nonAcceptedTasksPresent" class="fixBorderRadius modal-content" style="margin-bottom: 30px;">
+    <div class="modal-header">
+      <h4 class="modal-title"><strong>Your New Tasks</strong></h4>
+    </div>
+  
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="question">Tasks</th>
+          <th class="questionLevel">Deadline</th>
+          <th style="padding-left: 155px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let topic of nonAcceptedTasks;">
+          <td class="question lengthFix">{{ topic.Topic }}</td>
+          <td class="questionLevel">{{ topic.DeadLine }}</td>
+          
+          <td class="BtnsSpacing">
+            <button type="button" class="custom-btn btn btn-outline-primary btn-sm"
+                (click)="openAndClosePopup('OpenAcceptedTaskPopUp', topic.Topic, 'Accepted')">Accept</button>
+            <button type="button" class="custom-btn editBtnMargin btn btn-outline-danger btn-sm"
+                (click)="openAndClosePopup('OpenRejectedTaskPopUp', topic.Topic, 'Rejected')">Reject</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+  <!-- Reject Task PopUP -->
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Reject Task</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="exampleInputEmail1">Reason</label>
+          <textarea class="form-control" rows="3" placeholder="Enter Reason of Rejection"
+            [(ngModel)]="reason"></textarea>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)=acceptOrRejectTask()>Reject Task</button>
+        <button type="button" class="btn btn-secondary" (click)="openAndClosePopup('Close')">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Accept Task PopUP -->
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':acceptPopUpDisplayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Accept Task</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to accept this task?</p>
+        <p><strong>{{ topic }}</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="acceptOrRejectTask()">Accept Task</button>
+        <button type="button" class="btn btn-secondary" (click)="openAndClosePopup('Close')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':dismissPopUpDisplayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Task</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this task?</p>
+        <p><strong>{{ topic }}</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="DeleteTask()">Delete</button>
+        <button type="button" class="btn btn-secondary" (click)="openAndClosePopup('Close')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':assignPopUpDisplayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Re-Assign Task</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to re-assign this task?</p>
+        <p><strong>{{ topic }}</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="changeTaskStatus()">Re-Assign</button>
+        <button type="button" class="btn btn-secondary" (click)="openAndClosePopup('Close')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

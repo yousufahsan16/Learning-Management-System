@@ -1,0 +1,180 @@
+<ng-container>
+<div class="row" style="margin-left: 5px;">
+  <div *ngIf="adminRole.includes(ROLE)" ngbDropdown class="d-inline-block">
+    <button class="btn btn-outline-dark" ngbDropdownToggle>{{ selectedResource || 'Team Member' }}</button>
+    <div ngbDropdownMenu class="scrollable-dropdown-menu">
+      <button class="dropdown-item" (click)=ngOnInit()>Team Member</button>
+      <button *ngFor="let resource of allResources" class="dropdown-item" (click)=getUserSpecificTopics(resource)>{{
+        resource }}</button>
+    </div>
+  </div>
+
+  <button *ngIf="!adminRole.includes(ROLE)" class="btn btn-outline-dark" style="height: 38px;">{{ USER }}</button>
+
+  <div *ngIf="allTopics || resourceWiseTopics" ngbDropdown class="d-inline-block custom-dropdown">
+    <button class="btn btn-outline-dark" ngbDropdownToggle>{{ selectedTopic || 'Topic'}}</button>
+    <div *ngIf="allTopics && !resourceWiseTopics" ngbDropdownMenu class="scrollable-dropdown-menu custom-menu">
+      <button class="dropdown-item" (click)=ngOnInit()>All Topics</button>
+      <ng-container *ngFor="let topic of allTopics.Topics">
+        <button class="dropdown-item" (click)=getSelectedTopics(topic)>{{ topic.Topic }}{{' - ' + topic.Role }}</button>
+      </ng-container>
+    </div>
+    <div *ngIf="resourceWiseTopics" ngbDropdownMenu class="scrollable-dropdown-menu custom-menu">
+      <button class="dropdown-item" (click)=getSelectedUserSpecificTopics()>All Topics</button>
+      <ng-container *ngFor="let topic of resourceWiseTopics.Topics">
+        <button class="dropdown-item" *ngIf="!topic.TopicStatus" (click)=getSelectedUserSpecificTopics(topic)>
+          {{ topic.Topic }}
+        </button>
+      </ng-container>
+    </div>
+  </div>
+
+  <button *ngIf="adminRole.includes(ROLE)" class="btn btn-outline-dark" style="height: 38px;" (click)="openPopup('AddTopic')">Add
+    Topic</button>
+</div>
+<br>
+<br>
+
+<div *ngIf="allTopics && !resourceWiseTopics" class="row">
+  <div *ngFor="let topic of allTopics.Topics" class="col-lg-3 col-md-6 col-sm-6">
+    <div class="card card-stats">
+      <div class="card-header">
+        <button *ngIf="ROLE === 'SuperManager'" type="button" class="close" aria-label="Close"
+          (click)="openPopup('DeleteTopic',topic)">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-7 col-md-8" style="width: 200%;">
+            <div class="numbers" style="width: 200%;">
+              <p class="card-category text-left" style="color: black;">Topic: {{ topic.Topic }}</p>
+              <p class="card-category text-left" style="color: black;">Role: {{ topic.Role }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="card-footer">
+        <div class="row">
+          <button class="btn btn-outline-dark btn-block mb-2 mb-md-0"
+            style="max-width: 80%; margin: auto;" (click)="getQuestions(topic)">Topic Details</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="resourceWiseTopics" class="row">
+  <ng-container *ngFor="let topic of resourceWiseTopics.Topics">
+    <div *ngIf="!topic.TopicStatus" class="col-lg-3 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-7 col-md-8" style="width: 200%;">
+              <div class="numbers" style="width: 200%;">
+                <p class="card-category text-left" style="color: black;">Topic: {{ topic.Topic }}</p>
+                <p class="card-category text-left" style="color: black;">Role: {{ selectedUserRole }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="card-footer">
+          <div class="row">
+            <button *ngIf="adminRole.includes(ROLE)" class="btn btn-outline-success btn-block mb-2 mb-md-0"
+              style="max-width: 80%; margin: auto;" (click)="openPopup('AssignTask', topic)">Assign Task</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- PopUP -->
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Add Topics</h4>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="exampleInputEmail1">Topic</label>
+          <input type="name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp"
+            placeholder="Enter Topic Name" [(ngModel)]="topicName" [style.border-color]="invalidTopicName ? 'red' : '#E3E3E3'">
+        </div>
+        <div *ngIf="invalidTopicName">
+          <img src="../../../assets/img/invalid.png" alt="Error" style="width: 20px; height: 20px;">
+          <label style="color: red;">&nbsp;Topic Name Required.</label>
+        </div>
+
+        <div class="form-group">
+          <label for="exampleInputEmail1">Description</label>
+          <textarea class="form-control" rows="3" placeholder="Enter Topic Description"
+            [(ngModel)]="topicDescription"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="exampleFormControlSelect1">Select Role</label>
+          <select class="form-control" id="exampleFormControlSelect1" [(ngModel)]="topicUserRole" [style.border-color]="invalidUserRole ? 'red' : '#E3E3E3'">
+            <option>BA</option>
+            <option>DEV</option>
+            <option>QA</option>
+          </select>
+        </div>
+        <div *ngIf="invalidUserRole">
+          <img src="../../../assets/img/invalid.png" alt="Error" style="width: 20px; height: 20px;">
+          <label style="color: red;">&nbsp;Role Required.</label>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)=addTopic()>Add Topic</button>
+        <button type="button" class="btn btn-secondary" (click)="closePopup('AddTopic')">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':deletePopUpDisplayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Delete Topic</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this topic?</p>
+        <p><strong>{{ topicName }}</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="deleteTopic()">Delete</button>
+        <button type="button" class="btn btn-secondary" (click)="closePopup('DeleteTopic')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':assignPopUpDisplayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Assign Topic</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to assign <strong> {{ topicName }} </strong> to <strong> {{ selectedResource
+            }}</strong> </p>
+        <!-- <p><strong></strong></p> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-success" (click)="assignTask()">Assign</button>
+        <button type="button" class="btn btn-secondary" (click)="closePopup('AssignTask')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</ng-container>
+
+<!-- <ng-container *ngIf="!parent"><app-topic-details [topic]="dataToChild"></app-topic-details></ng-container> -->

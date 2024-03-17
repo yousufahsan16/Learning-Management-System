@@ -1,0 +1,84 @@
+<ng-container *ngIf="!topicDetails">
+<div class="row" style="margin-left: 5px;">
+  <div ngbDropdown class="d-inline-block" *ngIf="adminRole.includes(ROLE)">
+    <button class="btn btn-outline-dark" ngbDropdownToggle>{{ selectedResource || 'Team Member' }}</button>
+    <div ngbDropdownMenu class="scrollable-dropdown-menu">
+      <button class="dropdown-item" (click)=ngOnInit()>Team Member</button>
+      <button *ngFor="let resource of allResources" class="dropdown-item" (click)=getUserSpecificTopics(resource)>{{
+        resource }}</button>
+    </div>
+  </div>
+
+  <button *ngIf="!adminRole.includes(ROLE)" class="btn btn-outline-dark" style="height: 38px;">{{ USER }}</button>
+
+  <div *ngIf="resourceWiseTopics" ngbDropdown class="d-inline-block custom-dropdown">
+    <button class="btn btn-outline-dark" ngbDropdownToggle>{{ selectedTopic || 'Topic'}}</button>
+    <div ngbDropdownMenu class="scrollable-dropdown-menu custom-menu">
+      <button class="dropdown-item" *ngIf="resourceWiseTopics.Topics.length > 0" (click)=getSelectedUserSpecificTopics()>Assigned Topics</button>
+      <ng-container *ngFor="let topic of resourceWiseTopics.Topics">
+        <button *ngIf="topic.TopicStatus === 'Assign' || topic.TopicStatus === 'TrainingCompleted'" 
+        class="dropdown-item" (click)=getSelectedUserSpecificTopics(topic)>{{ topic.Topic }}</button>
+      </ng-container>
+    </div>
+  </div>
+</div>
+<br>
+<br>
+
+<div *ngIf="resourceWiseTopics" class="row">
+  <ng-container *ngFor="let topic of resourceWiseTopics.Topics">
+    <div *ngIf="topic.TopicStatus === 'Assign' || topic.TopicStatus === 'TrainingCompleted'" class="col-lg-3 col-md-6 col-sm-6">
+      <div class="card card-stats">
+        <div class="card-header">
+          <button *ngIf="adminRole.includes(ROLE)" type="button" class="close" aria-label="Close"
+            (click)="openAndClosePopup('DeleteTopic',topic)">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-7 col-md-8" style="width: 200%;">
+              <div class="numbers" style="width: 200%;">
+                <p class="card-category text-left" style="color: black;">Topic: {{ topic.Topic }}</p>
+                <p class="card-category text-left" style="color: black;">Status: {{ topic.TopicStatus }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="card-footer">
+          <div class="row">
+            <button *ngIf="adminRole.includes(ROLE) && topic.TopicStatus === 'TrainingCompleted'" class="btn btn-outline-success btn-block mb-2 mb-md-0"
+              style="max-width: 80%; margin: auto;" (click)="createTask(topic)">Create Task</button>
+          </div>
+          <div class="row">
+            <button *ngIf="!adminRole.includes(ROLE)" class="btn btn-outline-success btn-block mb-2 mb-md-0"
+              style="max-width: 80%; margin: auto;" (click)="moveToTopicDetails(topic)">Topic Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':deletePopUpDisplayStyle}">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Dismiss Topic</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to dismiss this topic?</p>
+        <p><strong>{{ topicName }}</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="dismissTopic()">Dismiss</button>
+        <button type="button" class="btn btn-secondary" (click)="openAndClosePopup('Close')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div></ng-container>
+
+<!-- <ng-container *ngIf="!topicDetails"><app-create-tasks [getData]="dataToChild"></app-create-tasks></ng-container> -->
+
+<!-- <ng-container *ngIf="topicDetails"><app-topic-details [dataFromAssignedTasks]="dataToTopicDetails"></app-topic-details></ng-container> -->

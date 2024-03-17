@@ -1,0 +1,35 @@
+.centered-modal-dialog {
+    position: absolute;
+    top: 35%;
+    bottom: 50%;
+    left: 40%;
+    right: 50%;
+    margin: auto;
+    width: 50%;
+    height: 50%;
+}
+
+.close {
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: rgb(255, 0, 0);
+    text-shadow: 0 1px 0 #fff;
+    opacity: 0.5;
+}
+
+/* .modal-body {
+    max-height: 300px;
+    overflow-y: auto;
+} */
+
+.custom-btn {
+    height: 30px;
+    width: 90px;
+}
+
+.scrollable-dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+}

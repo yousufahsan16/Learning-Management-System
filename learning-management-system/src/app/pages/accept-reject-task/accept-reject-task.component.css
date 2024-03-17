@@ -1,0 +1,36 @@
+.question {
+    padding-left: 18px;
+}
+
+.lengthFix {
+    padding-right: 10px; 
+    width: 500px;
+    text-align: justify;
+}
+
+.editBtnMargin {
+    margin-left: 10px;
+}
+
+.custom-btn {
+    height: 30px;
+    width: 90px;
+}
+
+.BtnsSpacing {
+    padding-left: 100px;
+}
+
+.questionLevel {
+    padding-left: 50px;
+    text-align: center;
+}
+
+.fixBorderRadius {
+    border-radius: 12px;
+}
+
+.scrollable-dropdown-menu {
+    max-height: 200px;
+    overflow-y: auto;
+}

@@ -1,0 +1,259 @@
+<ng-container *ngIf="!navigateToManageGrades">
+<div *ngIf="!showEditDiv" class="my-group">
+  <div class="row" style="margin-left: 5px;">
+    <div ngbDropdown class="d-inline-block" *ngIf="adminRole.includes(ROLE)">
+      <button class="btn btn-outline-dark" ngbDropdownToggle>{{ selectedResource || 'Team Member' }}</button>
+      <div ngbDropdownMenu class="scrollable-dropdown-menu">
+        <button class="dropdown-item" (click)=ngOnInit()>Team Member</button>
+        <button *ngFor="let resource of allResources" class="dropdown-item" (click)=getUserSpecificTopics(resource)>{{
+          resource }}</button>
+      </div>
+    </div>
+
+    <button *ngIf="!adminRole.includes(ROLE)" class="btn btn-outline-dark" style="height: 38px;">{{ USER }}</button>
+
+    <div *ngIf="resourceWiseTopics" ngbDropdown class="d-inline-block custom-dropdown">
+      <button class="btn btn-outline-dark" ngbDropdownToggle>{{ selectedTopic || 'Topic'}}</button>
+      <div ngbDropdownMenu class="scrollable-dropdown-menu custom-menu">
+      <button class="dropdown-item" *ngIf="resourceWiseTopics.Topics.length > 0" (click)=getSelectedUserSpecificTopics()>Assigned Topics</button>
+      <ng-container *ngFor="let topic of resourceWiseTopics.Topics">
+        <button *ngIf="topic.TopicStatus !== '' && topic.TopicStatus !== 'Assign' && topic.TopicStatus !== 'TrainingCompleted'" 
+        class="dropdown-item" (click)=getSelectedUserSpecificTopics(topic)>{{ topic.Topic }}</button>
+      </ng-container>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+
+  <div *ngIf="resourceWiseTopics" class="row">
+    <ng-container *ngFor="let topic of resourceWiseTopics.Topics">
+      <div *ngIf="topic.TopicStatus !== '' && topic.TopicStatus !== 'Assign' && topic.TopicStatus !== 'TrainingCompleted'" class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+          <div class="card-header">
+            <button *ngIf="adminRole.includes(ROLE) && topic.TopicStatus !== 'InProgress'" type="button" class="close"
+              aria-label="Close" (click)="openAndClosePopup('DeleteTopic',topic)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-7 col-md-8" style="width: 200%;">
+                <div class="numbers" style="width: 200%;">
+                  <p class="card-category text-left" style="color: black;">Topic: {{ topic.Topic }}</p>
+                  <p class="card-category text-left" style="color: black;">Status: {{
+                    topic.TopicStatus.includes('Rejected') ? 'Rejected' : topic.TopicStatus }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="card-footer">
+            <div class="row"
+              *ngIf="adminRole.includes(ROLE) && (topic.TopicStatus !== 'InProgress' && topic.TopicStatus !== 'ResultSubmitted' && topic.TopicStatus !== 'ResultReviewed')">
+              <button class="btn btn-outline-success btn-block mb-2 mb-md-0" style="max-width: 80%; margin: auto;"
+                (click)="togglePage(topic.Topic)">Edit Task</button>
+            </div>
+            <div class="row" *ngIf="adminRole.includes(ROLE) && topic.TopicStatus === 'ResultSubmitted'">
+              <button class="btn btn-outline-success btn-block mb-2 mb-md-0" style="max-width: 80%; margin: auto;"
+                (click)="navigateToGrades(topic.Topic, topic.TopicStatus)">Review Result</button>
+            </div>
+            <div class="row" *ngIf="!adminRole.includes(ROLE) && topic.TopicStatus === 'ResultSubmitted'">
+              <button class="btn btn-outline-success btn-block mb-2 mb-md-0" style="max-width: 80%; margin: auto;"
+                (click)="navigateToGrades(topic.Topic, topic.TopicStatus)">View Result</button>
+            </div>
+            <div class="row" *ngIf="topic.TopicStatus === 'ResultReviewed'">
+              <button class="btn btn-outline-success btn-block mb-2 mb-md-0" style="max-width: 80%; margin: auto;"
+                (click)="navigateToGrades(topic.Topic, topic.TopicStatus)">View Result</button>
+            </div>
+            <div class="row" *ngIf="!adminRole.includes(ROLE) && (topic.TopicStatus === 'TaskCreated' || topic.TopicStatus === 'InProgress')">
+              <button class="btn btn-outline-success btn-block " style="max-width: 80%; margin: auto;"
+                (click)="attemptQuizPage(topic.Topic)">Attempt Task</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+
+<div *ngIf="showEditDiv" class="my-group">
+  <div class="fixBorderRadius componentMargin modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title"><strong>Existing Questions</strong></h4>
+      <h6 class="deadline" style="padding-left: 45px; padding-top: 10px;
+      margin-left: 250px;">Deadline {{ taskDeadLine }}</h6>
+      <button type="button" class="btn btn-danger deadline" (click)="openAndCloseUpdateDatePopUp('updateDate')">Update
+        Date</button>
+    </div>
+    <div class="modal-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="question"></th>
+            <th class="question">Question</th>
+            <th class="questionLevel">Question Level</th>
+            <th class="actionSpacing">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let question of taskQuestions; let i = index">
+            <td><input class="form-check-input" #checkboxRef type="checkbox"
+                style="margin-left: 10px; margin-top: -5px; display: block;" type="checkbox"
+                (change)="manageQuestionsToDelete($event,i)"></td>
+            <td class="question lengthFix">{{ question.Question }}</td>
+            <td class="questionLevel">{{ question.Level }}</td>
+            <td class="BtnsSpacing">
+              <button type="button" class="custom-btn editBtnMargin btn btn-outline-danger btn-sm"
+                (click)="openPopup(i)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+        <br>
+      </table>
+    </div>
+    <div *ngIf="questionsToDelete.length > 1" class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="openPopup()">Delete
+        Questions</button>
+    </div>
+  </div>
+
+
+  <div *ngIf="taskQuestions.length != 15" class="fixBorderRadius componentMargin modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title"><strong>Add More Questions in Task</strong></h4>
+      <div class="deadline">
+        <input class="form-control calender" type="date" name="taskDeadLine" [(ngModel)]="date" min="{{ minDate }}"
+        [style.border-color]="dateRequired ? 'red' : '#E3E3E3'" [style.color]="dateRequired ? 'red' : '#2c2c2c'"
+        (input)="dateSubmitted()"/>
+      </div>
+    </div>
+    <div class="modal-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="question"></th>
+            <th class="question">Question</th>
+            <th class="questionLevel">Question Level</th>
+            <th class="actionSpacing">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let question of topicQuestions; let i = index">
+            <td><input class="form-check-input" #checkboxRef type="checkbox"
+                style="margin-left: 10px; margin-top: -5px; display: block;" type="checkbox"
+                (click)="manageQuestionsToAdd($event, i)"></td>
+            <td class="question lengthFix">{{ question.Question }}</td>
+            <td class="questionLevel">{{ question.Level }}</td>
+            <td class="BtnsSpacing">
+              <button type="button" class="editBtnMargin btn btn-outline-primary btn-sm custom-btn "
+                (click)="manageQuestionsToAdd($event,i, true)">Add</button>
+            </td>
+          </tr>
+        </tbody>
+        <br>
+      </table>
+    </div>
+    <div *ngIf="multipleSelectedQuestions.length > 1" class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="mergeAllQuestions()">Update</button>
+    </div>
+  </div>
+
+
+  <div *ngIf="questionsToAdd.length > 0" class="fixBorderRadius componentMargin modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title"><strong>Task</strong></h4>
+      <h6 class="deadline deadlineHeading">Deadline: {{ date || taskDeadLine }}</h6>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="ques"></th>
+          <th>Question</th>
+          <th class="questionLevel">Question Level</th>
+          <th class="actionSpacing">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let question of questionsToAdd; let questionNo = index">
+          <!-- <th ></th> -->
+          <td class="ques" style="text-align:center;">{{ questionNo+1 }}</td>
+          <td class="lengthFix">{{ question.Question }}</td>
+          <td class="questionLevel">{{ question.Level }}</td>
+          <td class="BtnsSpacing">
+            <button type="button" class="custom-btn editBtnMargin btn btn-outline-danger btn-sm"
+              (click)="removeQuestions(questionNo)">Remove</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="addQuestion()">Update Task</button>
+    </div>
+  </div>
+
+  <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':deletePopUpDisplayStyle}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Delete {{ questionsToDelete.length > 1 ? 'Questions' : 'Question'}}</h4>
+        </div>
+        <div class="modal-body" style="max-height: 300px; overflow-y: auto;">
+          <p *ngIf="questionsToDelete.length === taskQuestions.length">You are about to delete All questiosn from the
+            Task this will lead to deletion of whole task and you have to create task for this user again. </p>
+          <p>Are you sure you want to delete {{ questionsToDelete.length > 1 ? 'these Questions?' : 'this Question?'}}
+          </p>
+          <p *ngFor="let question of questionsToDelete"><strong>{{ question.Question }}</strong></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="deleteQuestion()">Delete</button>
+          <button type="button" class="btn btn-secondary" (click)="closePopup()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':updateDatePopUp}">
+  <div class="modal-dialog centered-modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Update Deadline</h4>
+      </div>
+      <div class="modal-body">
+        <p>Select Date</p>
+          <input class="form-control calender" type="date" name="taskDeadLine" [(ngModel)]="date" min="{{minDate}}"
+          [style.border-color]="dateRequired ? 'red' : '#E3E3E3'" [style.color]="dateRequired ? 'red' : '#2c2c2c'"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="updateDeadline()">Update Deadline</button>
+        <button type="button" class="btn btn-secondary" (click)="openAndCloseUpdateDatePopUp('Close')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':dismissPopUpDisplayStyle}">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Dismiss Topic</h4>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to dismiss this topic?</p>
+          <p><strong>{{ topicName }}</strong></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" (click)="dismissTopic()">Dismiss</button>
+          <button type="button" class="btn btn-secondary" (click)="openAndClosePopup('Close')">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<!-- <ng-container *ngIf="!navigateToManageGrades"><app-attempt-quiz [getData]="dataToChild"></app-attempt-quiz></ng-container> -->
+
+<!-- <ng-container *ngIf="navigateToManageGrades"><app-manage-grades [getData]="dataToManageGrades"></app-manage-grades></ng-container> -->

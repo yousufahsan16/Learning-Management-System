@@ -1,0 +1,212 @@
+<div class="fixBorderRadius componentMargin modal-content" [ngClass]="{'blur': blurBackground}">
+    <div class="modal-header">
+        <h4 class="modal-title"><strong>User Results</strong></h4>
+    </div>
+    <div class="modal-body">
+        <div ngbDropdown class="d-inline-block">
+            <button class="btn btn-outline-dark" ngbDropdownToggle>Attempt No {{ attemptNo }}</button>
+            <div ngbDropdownMenu class="scrollable-dropdown-menu">
+                <button *ngFor="let result of results" class="dropdown-item"
+                    (click)=getAttemptWiseResult(result)>Attempt No {{ result.AttemptNo }}</button>
+            </div>
+        </div>
+        <table *ngIf="adminRole.includes(ROLE) || (!adminRole.includes(ROLE) && showResult)" class="table">
+            <thead>
+                <tr>
+                    <th>Question</th>
+                    <th>Answer</th>
+                    <th class="center-align-text">Ratings</th>
+                    <th>Strong Points</th>
+                    <th>Week Points</th>
+                    <th *ngIf="adminRole.includes(ROLE) && !currentShowingResult?.isReviewed" class="actionSpacing center-align-text">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let question of currentShowingResult?.Questions; let i = index">
+                    <td style="text-align: justify;">{{ question.Question }}</td>
+                    <td style="text-align: justify;">{{ question.Answer }}</td>
+                    <td class="center-align-text">{{ question.Rating }}</td>
+                    <td style="text-align: justify;">{{ question.PositivePoints }}</td>
+                    <td style="text-align: justify;">{{ question.MissingPoints }}</td>
+                    <td *ngIf="adminRole.includes(ROLE) && !currentShowingResult?.isReviewed" class="BtnsSpacing center-align-text">
+                        <button type="button" class="btn btn-outline-primary btn-sm" style="height: 50px; width: 100px;"
+                            (click)="setEditFields(question)">Edit Remarks</button>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="1"><strong>Total Grades: {{ currentShowingResult?.TotalGrades }}</strong></td>
+                    <td colspan="1"><strong>Percentage: {{ response?.Percentage.toFixed(2) }}</strong></td>
+                    <td colspan="1"><strong>Level: {{ response?.Level }}</strong></td>
+                    <td><strong></strong></td>
+                    <td><strong></strong></td>
+                    <td *ngIf="adminRole.includes(ROLE) && !currentShowingResult?.isReviewed">
+                        <button type="button" class="btn btn-outline-primary btn-sm" style="height: 50px; width: 100px;"
+                            (click)="finalizeResult()">Finalize Result</button>
+                    </td>
+                </tr>
+            </tfoot>
+            <br>
+        </table>
+        <p *ngIf="!adminRole.includes(ROLE) && !showResult" style="text-align: center;">No results to display.</p>
+    </div>
+    <div *ngIf="adminRole.includes(ROLE)" class="modal-footer">
+        <button type="button" class="btn btn-primary"
+            (click)="navigateToCreateTask()">Re-Create Task</button>
+      </div>
+</div>
+
+<!-- PopUP -->
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStyle}">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="width: 500px; height: 400px;">
+        <div class="modal-content custom-modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Remarks</h4>
+            </div>
+            <div class="modal-body">
+
+
+                <div class="modal-body" style="max-height: 300px; overflow-y: auto;">
+                    <p style="margin-left: 0px;"><strong>Question:</strong> {{question}}
+                    </p>
+                    <p><strong>Answer:</strong> {{ answer }}</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="ratingInput">Select Rating</label>
+                    <select class="form-control" id="ratingInput" [(ngModel)]="questionRating">
+                        <option *ngFor="let index of ratingArray">{{index}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="strongPointsInput">Strong Points</label>
+                    <textarea class="form-control" id="strongPointsInput" rows="3"
+                        [(ngModel)]="strongPoints"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="weakPointsInput">Weak Points</label>
+                    <textarea class="form-control" id="weakPointsInput" rows="3" [(ngModel)]="weakPoints"></textarea>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" (click)="editGrades()">Save</button>
+                <button type="button" class="btn btn-secondary" (click)="closePopup()">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Resource Level -->
+<!-- <div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':editLevelDisplay}">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="width: 500px; height: 400px;">
+        <div class="modal-content custom-modal-content" style="width: 800px;">
+            <div class="modal-header">
+                <h4 class="modal-title">Edit Resourse Level</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="ratingInput">Select Level</label>
+                    <select class="form-control" id="ratingInput" [(ngModel)]="userLevel">
+                        <option *ngFor="let index of levelArray">{{index}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" (click)="editUserLevel()">Save</button>
+                <button type="button" class="btn btn-secondary" (click)="closeEditResourcePopUp()">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div> -->
+
+<!-- 
+<div class="modal" tabindex="-1" role="dialog" [ngStyle]="{'display':displayStyle}">
+    <div class="modal-dialog centered-modal-dialog"
+        style="position: absolute; top: 35%; bottom: 50%; left: 40%; right: 50%; margin: auto; max-width: 500px; height: 50%;"
+        role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"><strong>Add Question</strong></h4>
+                <button type="button" class="close" aria-label="Close" (click)="closePopup()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="dataName">Question</label>
+                    <input type="text" class="form-control" id="dataName" placeholder="Enter Question"
+                        [(ngModel)]="questionToAdd">
+                </div>
+
+                <div class="form-group">
+                    <label for="dataCategory">Question Level</label>
+                    <select class="form-control" id="dataCategory" (change)="showAnswerField()">
+                        <option value="Entry">Entry</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Expert">Expert</option>
+                    </select>
+                </div>
+
+                <div *ngIf="showAnswer">
+                    <div class="form-group">
+                        <label for="dataAnswer">Answer</label>
+                        <div class="row" style="margin-left: 50px;">
+                            <div class="col-xs-6 col-sm-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                        id="inlineRadio1" value="True" [(ngModel)]="selectedAnswer" />
+                                    <label class="form-check-label" for="inlineRadio1">True</label>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-3">
+                                <div class="form-check" style="margin-left: 50px;">
+                                    <input class="form-check-input" type="radio" name="inlineRadioOptions"
+                                        id="inlineRadio2" value="False" [(ngModel)]="selectedAnswer" />
+                                    <label class="form-check-label" for="inlineRadio2">False</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Question Level</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let question of topicWiseQuestions">
+                            <td>{{ question.Question }}</td>
+                            <td>{{ question.Level }}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-primary btn-sm custom-btn"
+                                    (click)="setEditFields(question.Question, question.Level, question.Answer)">Edit</button>
+                                <button type="button" class="btn btn-outline-danger btn-sm custom-btn"
+                                    (click)="deleteQuestion(question.Question, question.Level)">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+                <button *ngIf="!showUpdateButton" type="button" class="btn btn-danger" (click)="insertQuestion()">Add
+                    Question</button>
+                <button *ngIf="showUpdateButton" type="button" class="btn btn-danger" (click)="editQuestion()">Update
+                    Question</button>
+            </div>
+        </div>
+    </div>
+</div> -->
